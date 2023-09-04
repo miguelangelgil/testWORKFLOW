@@ -1,6 +1,6 @@
 name: main
 on:
-    workflow_call:
+    workflow_dispatch:
       inputs:
         TAG_NAME:
           required: true
