@@ -25,7 +25,7 @@ jobs:
         if: ${{inputs.BUILD_TYPE == 'Production'}}
         uses: tvdias/github-tagger@v0.0.1
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          repo-token: "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"
           tag: "${{inputs.TAG_NAME}}"
           commit-sha: ${{github.sha}}
 
