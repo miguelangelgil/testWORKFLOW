@@ -3,15 +3,18 @@ on:
     workflow_dispatch:
       inputs:
         TAG_NAME:
+          description: 'tag name'
           required: true
+          default: '0.0.0'
           type: string
         BUILD_TYPE:
+          description: 'build type'
           required: true
-          type: string
-
-      secrets:
-        SLACK_BOT_TOKEN:
-          required: true
+          default: 'Development'
+          type: choice
+          options:
+          - Development
+          - Production
 
 jobs:
   preparing-environment:
