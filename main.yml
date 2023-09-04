@@ -19,14 +19,8 @@ on:
 jobs:
   preparing-environment:
     name: preparing runner
-    runs-on: m1
-    outputs:
-      RUNNER: ${{ runner.name }}
-      ID: ${{ env.ID }}
-      TS: ${{steps.slack.outputs.ts}}
-
+    runs-on: ubuntu-latest
     steps:
-
       - name: Tag commit
         if: ${{inputs.BUILD_TYPE == 'Production'}}
         uses: tvdias/github-tagger@v0.0.1
