@@ -1,0 +1,35 @@
+name: main
+on:
+    workflow_call:
+      inputs:
+        TAG_NAME:
+          required: true
+          type: string
+        BUILD_TYPE:
+          required: true
+          type: string
+
+      secrets:
+        SLACK_BOT_TOKEN:
+          required: true
+
+jobs:
+  preparing-environment:
+    name: preparing runner
+    runs-on: m1
+    outputs:
+      RUNNER: ${{ runner.name }}
+      ID: ${{ env.ID }}
+      TS: ${{steps.slack.outputs.ts}}
+
+    steps:
+
+      - name: Tag commit
+        if: ${{inputs.BUILD_TYPE == 'Production'}}
+        uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          tag: "${{inputs.TAG_NAME}}"
+          commit-sha: ${{github.sha}}
+
+      
