@@ -18,23 +18,27 @@ jobs:
           echo "ID del workflow monitoreado: $WORKFLOW_ID"
           echo "WORKFLOW_ID=$WORKFLOW_ID" >> $GITHUB_ENV
 
-      - name: Esperar a que termine el workflow monitoreado
-        run: |
-          STATUS="in_progress"
-          while [[ "$STATUS" == "in_progress" || "$STATUS" == "queued" ]]; do
-            sleep 10  # Espera 10 segundos antes de verificar nuevamente
-
-            STATUS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/repos/${{ github.repository }}/actions/runs/$WORKFLOW_ID" | jq -r '.status')
-
-            echo "Estado actual del workflow: $STATUS"
-          done
-
-      - name: Obtener estado final del workflow
-        run: |
-          CONCLUSION=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/actions/runs/$WORKFLOW_ID" | jq -r '.conclusion')
-
-          echo "El workflow finalizó con estado: $CONCLUSION"
+          - name: Monitorear jobs en ejecución
+          run: |
+            STATUS="in_progress"
+  
+            while [[ "$STATUS" == "in_progress" || "$STATUS" == "queued" ]]; do
+              sleep 1  # Esperar 10 segundos antes de verificar nuevamente
+  
+              JOBS_JSON=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  "https://api.github.com/repos/${{ github.repository }}/actions/runs/$WORKFLOW_ID/jobs")
+  
+              echo "$JOBS_JSON" | jq -r '.jobs[] | "🔄 Job: \(.name) | Estado: \(.status) | Resultado: \(.conclusion // "N/A")"'
+  
+              STATUS=$(echo "$JOBS_JSON" | jq -r '[.jobs[].status] | if all(. == "completed") then "completed" else "in_progress" end')
+  
+            done
+  
+          - name: Obtener estado final del workflow
+            run: |
+                CONCLUSION=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                    -H "Accept: application/vnd.github.v3+json" \
+                    "https://api.github.com/repos/${{ github.repository }}/actions/runs/$WORKFLOW_ID" | jq -r '.conclusion')
+    
+                echo "✅ El workflow finalizó con estado: $CONCLUSION"
