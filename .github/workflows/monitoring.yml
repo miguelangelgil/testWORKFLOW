@@ -23,7 +23,7 @@ jobs:
             STATUS="in_progress"
   
             while [[ "$STATUS" == "in_progress" || "$STATUS" == "queued" ]]; do
-              sleep 1  # Esperar 10 segundos antes de verificar nuevamente
+              sleep 10  # Esperar 10 segundos antes de verificar nuevamente
   
               JOBS_JSON=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   -H "Accept: application/vnd.github.v3+json" \
