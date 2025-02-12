@@ -5,6 +5,8 @@ on:
     workflows: ["testWorkflow"]
     types:
       - completed
+      - requested
+      - in_progress
     
 jobs:
     call-next-workflow:
