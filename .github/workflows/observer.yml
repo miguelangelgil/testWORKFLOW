@@ -12,6 +12,6 @@ jobs:
     call-next-workflow:
         uses: miguelangelgil/testActionObserver/.github/workflows/observer.yml@main
         with:
-            WORKFLOW: ${{ github.workflow }}
-            STATUS: ${{ github.event.workflow_run.conclusion }}
+            WORKFLOW: ${{ github.event.workflow }}
+            STATUS: ${{ github.event.action }}
             DETAILS: ${{ github.event.workflow_run.html_url }}
