@@ -16,21 +16,21 @@ jobs:
     steps:
       - name: Tag commit
         run: echo "job2"
-  # job3:
-  #   name: Job-3
-  #   runs-on: ubuntu-latest
-  #   needs: job2
-  #   steps:
-  #     - name: Tag commit
-  #       run: echo "job3"
+  job3:
+    name: Job-3
+    runs-on: ubuntu-latest
+    needs: job2
+    steps:
+      - name: Tag commit
+        run: echo "job3"
     
-  # job4:
-  #   name: Job-4
-  #   runs-on: ubuntu-latest
-  #   needs: job3
-  #   steps:
-  #     - name: Tag commit
-  #       run: echo "job4"
+  job4:
+    name: Job-4
+    runs-on: ubuntu-latest
+    needs: job3
+    steps:
+      - name: Tag commit
+        run: echo "job4"
   # job5:
   #   name: Job-5
   #   runs-on: ubuntu-latest
