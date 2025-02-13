@@ -7,6 +7,8 @@ jobs:
     name: slack
     runs-on: ubuntu-latest
     steps:
+    - name: log
+      run: echo ${{toJson(github.event.workflow)}}
     - name: Send GitHub Action data to a Slack workflow
       uses: slackapi/slack-github-action@v2.0.0
       with:
