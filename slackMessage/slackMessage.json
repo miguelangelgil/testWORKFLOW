@@ -1,0 +1,63 @@
+{
+    "attachments": [
+        {
+            "color": "#C2FAFB",
+            "blocks": [
+                {
+                "type": "header",
+                "text": {
+                    "type": "plain_text",
+                    "text": "GitHub Action build :pepe_naruto:"
+                }
+                },
+                {
+                "type": "section",
+                "fields": [
+                    {
+                    "type": "mrkdwn",
+                    "text": "*Created by: * inputs.actor"
+                    },
+                    {
+                    "type": "mrkdwn",
+                    "text": "*Project name: * inputs.project-name"
+                    }
+                ]
+                },
+                {
+                "type": "section",
+                "fields": [
+                    {
+                    "type": "mrkdwn",
+                    "text": "*Target Build: * inputs.platform - inputs.build-type"
+                    },
+                    {
+                    "type": "mrkdwn",
+                    "text": "*Version: * inputs.bundle-version-code"
+                    }
+                ]
+                },
+                {
+                "type": "section",
+                "fields": [
+                    {
+                    "type": "mrkdwn",
+                    "text": "*URL: * <inputs.commit-link| commit link>"
+                    },
+                    {
+                    "type": "mrkdwn",
+                    "text": "*URL: * <inputs.action-link| action link>"
+                    }
+                ]
+                },
+                {
+                    "type":"header",
+                    "text": 
+                    {
+                        "type":"plain_text",
+                        "text":"Tasks"
+                    }
+                }
+            ]
+        }
+    ]
+}

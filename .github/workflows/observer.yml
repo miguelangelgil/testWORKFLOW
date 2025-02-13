@@ -1,4 +1,4 @@
-name: Observer
+name: Observer workflow run
 on:
   workflow_run:
     workflows: ["testWorkflow"]
@@ -6,8 +6,133 @@ on:
       - completed
       - requested
       - in_progress
-    
+
+env:
+  JOBS: ""
+  TS: ""
+ 
 jobs:
+    headerMessage:
+        name: Header
+        runs-on: ubuntu-latest
+        if: ${{github.event.workflow_run.status == 'requested'}}
+        steps:
+            - name: slack header
+              id: slack 
+              uses: ./.github/github-workflows/.github/actionsUtils
+              with:
+                message-type: init
+                actor: "${{ github.event.workflow_run.actor }}"
+                project-name: "${{ github.event.workflow_run.event.inputs.PROJECT_NAME }}"
+                bundle-version-code: "${{steps.platformDataConfig.outputs.BundleVersion}} (${{steps.platformDataConfig.outputs.BundleVersionCode}})"
+                platform: "${{github.event.workflow_run.event.inputs.TARGET_PLATFORM}}"
+                build-type: "${{github.event.workflow_run.event.inputs.BUILD_TYPE}}"
+                commit-link: "https://github.com/${{ github.event.workflow_run.repository.name }}/commit/${{github.event.workflow_run.head_commit.id }}"
+                action-link: "https://github.com/${{ github.event.workflow_run.repository.name }}/actions/runs/${{github.event.workflow_run.id }}"
+                slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+            - name: save slack ts
+              if: ${{steps.slack.conclusion == success()}}
+              run: |
+                echo "${{steps.slack.outputs.ts}}" > id.txt
+            - uses: actions/upload-artifact@v4
+              with:
+                name: slack-ts
+                path: id.txt
+
+    GetJobs:
+      name: get jobs
+      runs-on: ubuntu-latest
+      if: ${{github.event.workflow_run.status == 'in_progress' || github.event.workflow_run.status == 'completed' }}
+      steps:
+        - id: get-jobs
+          run: |
+            response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/jobs")
+            
+            # Extraer los nombres de los jobs
+            jobs=$(echo "$response" | jq -r '.jobs[]')
+            
+            echo "JOBS=$jobs" >> $GITHUB_ENV
+        - name: get ts
+          uses: actions/download-artifact@v4
+          with:
+            name: slack-ts
+        - run: echo "TS=$(cat "id.txt")" >> $GITHUB_ENV
+            
+
+    
+    BodyMessage:
+      name: Body
+      needs: GetJobs
+      runs-on: ubuntu-latest
+      if: ${{github.event.workflow_run.status == 'in_progress'}}
+      strategy:
+        matrix:
+          job-name: ${{ fromJson(env.JOBS.name) }}
+          steps:
+            - name: slack registry
+              id: registry
+              uses: ./.github/github-workflows/.github/actionsUtils
+              with:
+                update-ts: ${{ env.TS }}
+                message-type: newtask
+                task-name: "${{ matrix.job-name }}"
+                slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+
+          
+
+    EndBody:
+      name: End Body
+      needs: GetJobs
+      runs-on: ubuntu-latest
+      if: ${{github.event.workflow_run.status == 'completed'}}
+      strategy:
+        matrix:
+          job-name: ${{ fromJson(env.JOBS.name) }}
+          job-state: ${{ fromJson(env.JOBS.status) }}
+          steps:
+            - name: slack registry
+              id: registry
+              uses: ./.github/github-workflows/.github/actionsUtils
+              with:
+                update-ts: ${{ env.TS }}
+                message-type: taskstatus
+                task-name: "${{ matrix.job-name }}"
+                task-status: ${{matrix.job-status}}
+                slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+      
+    EndMessage:
+      name: End
+      needs: EndBody
+      runs-on: ubuntu-latest
+      if: ${{github.event.workflow_run.status == 'completed'}}
+      steps:
+      - name: slack ending with link
+        uses: ./.github/github-workflows/.github/actionsUtils
+        if: ${{needs.deployment.outputs.BUILD_URL != null}}
+        with:
+          update-ts: ${{inputs.SLACK_MESSAGE_ID}}
+          message-type: endlink
+          task-name: "${{needs.deployment.outputs.BUILD_URL}}"
+          build-type: "${{inputs.BUILD_TYPE}}"
+          project-name: "${{inputs.PROJECT_NAME}}"
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: slack ending
+        uses: ./.github/github-workflows/.github/actionsUtils
+        if: ${{needs.deployment.outputs.BUILD_URL == null}}
+        with:
+          update-ts: ${{inputs.SLACK_MESSAGE_ID}}
+          message-type: end
+          project-name: "${{inputs.PROJECT_NAME}}"
+          build-type: "${{inputs.BUILD_TYPE}}"
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      
+
+
+
+            
     notify:
         name: notify
         runs-on: ubuntu-latest

@@ -1,0 +1,13 @@
+{
+    "type":"section",
+    "fields": [
+    {
+        "type":"mrkdwn",
+        "text":">>TEXT<<"
+    },
+    {
+        "type":"mrkdwn",
+        "text":":pepe_naruto:"
+    }
+    ]
+}
