@@ -10,7 +10,7 @@ jobs:
     - name: Send GitHub Action data to a Slack workflow
       uses: slackapi/slack-github-action@v2.0.0
       with:
-        payload-file-path: ${{github.event.workflow}}
+        payload-file-path: ${{toJson(github.event.workflow)}}
         webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
         webhook-type: webhook-trigger
   job1:
