@@ -16,7 +16,16 @@ jobs:
               run: |
                 curl -X POST -H 'Content-type: application/json' --data '{
                     "custom_event": "workflow_completed",
-                    "workflow_name": "${{ github.workflow }}",
-                    "repository": "${{ github.repository }}",
-                    "status": "${{ github.event.workflow_run.conclusion }}"
+                    "workflow_name": "${{ github.event.workflow_run.name }}",
+                    "repository": "${{ github.repository.name }}",
+                    "status": "${{ github.event.workflow_run.status }}",
+                    "conclusion": "${{ github.event.workflow_run.conclusion }}",
+                    "url": "${{ github.event.workflow_run.html_url }}",
+                    "created_at": "${{ github.event.workflow_run.created_at }}",
+                    "updated_at": "${{ github.event.workflow_run.updated_at }}",
+                    "user": "${{ github.event.workflow_run.actor.login }}",
+                    "run_started_at": "${{ github.event.workflow_run.run_started_at }}",
+                    "cancel_url": "${{ github.event.workflow_run.cancel_url }}",
+                    "rerun_url": "${{ github.event.workflow_run.rerun_url }}",
+                    "head_commit": "${{ github.event.workflow_run.head_commit.message }}",
                 }' ${{ secrets.SLACK_WEBHOOK_URL }}
