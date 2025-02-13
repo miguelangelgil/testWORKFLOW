@@ -39,6 +39,7 @@ jobs:
       runs-on: ubuntu-latest
       if: ${{github.event.workflow_run.status == 'in_progress' || github.event.workflow_run.status == 'completed' }}
       steps:
+        - run: sudo apt-get install jq
         - id: get-jobs
           run: |
             response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
