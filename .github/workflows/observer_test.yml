@@ -1,4 +1,4 @@
-name: Observer workflow run
+name: Observer workflow run 2
 on:
   workflow_run:
     workflows: ["testWorkflow"]
@@ -6,11 +6,6 @@ on:
       - completed
       - requested
       - in_progress
-
-env:
-  JOBS: ""
-  TS: ""
- 
 jobs:
     headerMessage:
         name: Header
@@ -94,7 +89,6 @@ jobs:
                 echo "message-type: taskstatus"
                 echo "task-name: ${{ matrix.job-name }}"
                 echo "task-status: ${{matrix.job-status}}"
-                echo "slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}"
 
       
     EndMessage:
