@@ -1,22 +1,22 @@
-# name: Observer
-# on:
-#   workflow_run:
-#     workflows: ["testWorkflow"]
-#     types:
-#       - completed
-#       - requested
-#       - in_progress
+name: Observer
+on:
+  workflow_run:
+    workflows: ["testWorkflow"]
+    types:
+      - completed
+      - requested
+      - in_progress
     
-# jobs:
-#     notify:
-#         name: notify
-#         runs-on: ubuntu-latest
-#         steps:
-#         - name: notify
-#           run: echo "🔔 *Workflow:* ${{ github.event.workflow.name }} \n📜 *Estado:* ${{ github.event.action }} \n🔗 *Detalles:* ${{ github.event.workflow_run.html_url }}"
-#     # call-next-workflow:
-#     #     uses: miguelangelgil/testActionObserver/.github/workflows/observer.yml@main
-#     #     with:
-#     #         WORKFLOW: ${{ github.event.workflow.name }}
-#     #         STATUS: ${{ github.event.action }}
-#     #         DETAILS: ${{ github.event.workflow_run.html_url }}
+jobs:
+    notify:
+        name: notify
+        runs-on: ubuntu-latest
+        steps:
+            - name: Modificar y enviar webhook
+              run: |
+                curl -X POST -H 'Content-type: application/json' --data '{
+                    "custom_event": "workflow_completed",
+                    "workflow_name": "${{ github.workflow }}",
+                    "repository": "${{ github.repository }}",
+                    "status": "${{ github.event.workflow_run.conclusion }}"
+                }' ${{ secrets.SLACK_WEBHOOK_URL }}
