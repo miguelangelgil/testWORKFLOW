@@ -26,9 +26,9 @@ jobs:
                 echo "ts=65789473895" >> $GITHUB_OUTPUT
 
             - name: save slack ts
-              if: ${{steps.slack.conclusion == success()}}
+              if: ${{ steps.slack.conclusion == 'success' }}
               run: |
-                echo "${{steps.slack.outputs.ts}}" > id.txt
+                echo "${{ steps.slack.outputs.ts }}" > id.txt
             - uses: actions/upload-artifact@v4
               with:
                 name: slack-ts
@@ -56,44 +56,44 @@ jobs:
             
 
     
-    BodyMessage:
-      name: Body
-      needs: GetJobs
-      runs-on: ubuntu-latest
-      if: ${{github.event.workflow_run.status == 'in_progress'}}
-      strategy:
-        matrix:
-          job-name: ${{ fromJson(env.JOBS.name) }}
-          steps:
-            - name: slack registry
-              id: registry
-              run: |
-               echo "update-ts: ${{ env.TS }}"
-               echo "message-type: newtask"
-               echo "task-name: ${{ matrix.job-name }}"
+    # BodyMessage:
+    #   name: Body
+    #   needs: GetJobs
+    #   runs-on: ubuntu-latest
+    #   if: ${{github.event.workflow_run.status == 'in_progress'}}
+    #   strategy:
+    #     matrix:
+    #       job-name: ${{ fromJson(env.JOBS.name) }}
+    #       steps:
+    #         - name: slack registry
+    #           id: registry
+    #           run: |
+    #            echo "update-ts: ${{ env.TS }}"
+    #            echo "message-type: newtask"
+    #            echo "task-name: ${{ matrix.job-name }}"
 
-    EndBody:
-      name: End Body
-      needs: GetJobs
-      runs-on: ubuntu-latest
-      if: ${{github.event.workflow_run.status == 'completed'}}
-      strategy:
-        matrix:
-          job-name: ${{ fromJson(env.JOBS.name) }}
-          job-state: ${{ fromJson(env.JOBS.status) }}
-          steps:
-            - name: slack registry
-              id: registry
-              run: |
-                echo "update-ts: ${{ env.TS }}"
-                echo "message-type: taskstatus"
-                echo "task-name: ${{ matrix.job-name }}"
-                echo "task-status: ${{matrix.job-status}}"
+    # EndBody:
+    #   name: End Body
+    #   needs: GetJobs
+    #   runs-on: ubuntu-latest
+    #   if: ${{github.event.workflow_run.status == 'completed'}}
+    #   strategy:
+    #     matrix:
+    #       job-name: ${{ fromJson(env.JOBS.name) }}
+    #       job-state: ${{ fromJson(env.JOBS.status) }}
+    #       steps:
+    #         - name: slack registry
+    #           id: registry
+    #           run: |
+    #             echo "update-ts: ${{ env.TS }}"
+    #             echo "message-type: taskstatus"
+    #             echo "task-name: ${{ matrix.job-name }}"
+    #             echo "task-status: ${{matrix.job-status}}"
 
       
     EndMessage:
       name: End
-      needs: EndBody
+      # needs: EndBody
       runs-on: ubuntu-latest
       if: ${{github.event.workflow_run.status == 'completed'}}
       steps:
