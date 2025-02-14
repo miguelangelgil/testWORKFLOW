@@ -1,6 +1,16 @@
 name: testWorkflow
 on:
     workflow_dispatch:
+      inputs:
+        PROJECT_NAME:
+          required: true
+          type: string
+        TARGET_PLATFORM:
+          required: true
+          type: string
+        BUILD_TYPE:
+          required: true
+          type: string
 
 jobs:
   # slack:

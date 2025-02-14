@@ -7,6 +7,10 @@ on:
       - requested
       - in_progress
 jobs:
+    print:
+      runs-on: ubuntu-latest
+      steps:
+        - run: echo "${{github.event.workflow_run.status}}"
     headerMessage:
         name: Header
         runs-on: ubuntu-latest
