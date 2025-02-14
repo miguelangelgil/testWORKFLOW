@@ -17,7 +17,7 @@ jobs:
     headerMessage:
         name: Header
         runs-on: ubuntu-latest
-        if: ${{github.event.workflow_run.status == 'requested'}}
+        if: ${{github.event.action == 'requested'}}
         steps:
             - name: slack header test
               id: slack 
@@ -44,7 +44,7 @@ jobs:
     GetJobs:
       name: get jobs
       runs-on: ubuntu-latest
-      if: ${{github.event.workflow_run.status == 'in_progress' || github.event.workflow_run.status == 'completed' }}
+      if: ${{github.event.action == 'in_progress' || github.event.action == 'completed' }}
       steps:
         - run: sudo apt-get install jq
         - id: get-jobs
@@ -68,7 +68,7 @@ jobs:
     #   name: Body
     #   needs: GetJobs
     #   runs-on: ubuntu-latest
-    #   if: ${{github.event.workflow_run.status == 'in_progress'}}
+    #   if: ${{github.event.action == 'in_progress'}}
     #   strategy:
     #     matrix:
     #       job-name: ${{ fromJson(env.JOBS.name) }}
@@ -84,7 +84,7 @@ jobs:
     #   name: End Body
     #   needs: GetJobs
     #   runs-on: ubuntu-latest
-    #   if: ${{github.event.workflow_run.status == 'completed'}}
+    #   if: ${{github.event.action == 'completed'}}
     #   strategy:
     #     matrix:
     #       job-name: ${{ fromJson(env.JOBS.name) }}
@@ -103,7 +103,7 @@ jobs:
       name: End
       # needs: EndBody
       runs-on: ubuntu-latest
-      if: ${{github.event.workflow_run.status == 'completed'}}
+      if: ${{github.event.action == 'completed'}}
       steps:
         - run: echo "done"
       # - name: slack ending with link
