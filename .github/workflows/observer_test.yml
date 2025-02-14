@@ -10,7 +10,10 @@ jobs:
     print:
       runs-on: ubuntu-latest
       steps:
-        - run: echo "${{github.event.workflow_run.status}}"
+        - run: |
+            echo "status: ${{github.event.workflow_run.status}}"
+            echo "action: ${{github.event.action}}"
+            echo "triggering_actor: ${{github.event.workflow_run.triggering_actor}}"
     headerMessage:
         name: Header
         runs-on: ubuntu-latest
