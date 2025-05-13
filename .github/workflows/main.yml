@@ -45,6 +45,7 @@ jobs:
   job1:
     name: Job-1
     runs-on: ubuntu-latest
+    needs: header
     steps:
       - name: Tag commit1
         run: echo "job1"
