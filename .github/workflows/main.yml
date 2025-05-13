@@ -25,6 +25,23 @@ jobs:
   #       payload-file-path: ${{toJson(github.event.workflow)}}
   #       webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
   #       webhook-type: webhook-trigger
+  header:
+    name: Set Header
+    runs-on: ubuntu-latest
+    steps:
+      - name: send headrers
+        run: |
+          curl -X POST https://64fd-81-44-2-11.ngrok-free.app/headers \
+            -H "Content-Type: application/json" \
+            -d '{
+              "workflow": "${{ github.workflow }}",
+              "run_id": "${{ github.run_id }}",
+              "inputs": {
+                "PROJECT_NAME": "${{ inputs.PROJECT_NAME }}",
+                "TARGET_PLATFORM": "${{ inputs.TARGET_PLATFORM }}",
+                "BUILD_TYPE": "${{ inputs.BUILD_TYPE }}"
+              }
+            }'
   job1:
     name: Job-1
     runs-on: ubuntu-latest
