@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: send headrers
         run: |
-          ts=$(curl -X POST https://hooks.slack.com/triggers/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 \
+          ts=$(curl -s -X POST https://hooks.slack.com/triggers/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 \
             -H "Content-Type: application/json" \
             -d '{
               "state": ":pepe_naruto:"
