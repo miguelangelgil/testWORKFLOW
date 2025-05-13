@@ -29,21 +29,23 @@ jobs:
     name: Job-1
     runs-on: ubuntu-latest
     steps:
-      - name: Tag commit
+      - name: Tag commit1
         run: echo "job1"
+      - name: Tag commit2
+        run: echo "job1 step2"
   job2:
     name: Job-2
     runs-on: ubuntu-latest
     needs: job1
     steps:
-      - name: Tag commit
+      - name: Tag commit3
         run: echo "job2"
   job3:
     name: Job-3
     runs-on: ubuntu-latest
     needs: job2
     steps:
-      - name: Tag commit
+      - name: Tag commit4
         run: echo "job3"
     
   job4:
@@ -51,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: job3
     steps:
-      - name: Tag commit
+      - name: Tag commit5
         run: echo "job4"
   # job5:
   #   name: Job-5
