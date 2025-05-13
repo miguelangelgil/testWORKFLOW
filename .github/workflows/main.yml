@@ -31,16 +31,12 @@ jobs:
     steps:
       - name: send headrers
         run: |
-          curl -X POST https://64fd-81-44-2-11.ngrok-free.app/headers \
+          curl -X POST https://hooks.slack.com/triggers/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 \
             -H "Content-Type: application/json" \
             -d '{
-              "workflow": "${{ github.workflow }}",
-              "run_id": "${{ github.run_id }}",
-              "inputs": {
-                "PROJECT_NAME": "${{ inputs.PROJECT_NAME }}",
-                "TARGET_PLATFORM": "${{ inputs.TARGET_PLATFORM }}",
-                "BUILD_TYPE": "${{ inputs.BUILD_TYPE }}"
-              }
+              "project_name": "${{ inputs.PROJECT_NAME }}",
+              "target_platform": "${{ inputs.TARGET_PLATFORM }}",
+              "build_type": "${{ inputs.BUILD_TYPE }}"
             }'
   job1:
     name: Job-1
