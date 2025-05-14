@@ -42,8 +42,8 @@ jobs:
           bundle-version-code: "1.0.0"
           platform: "${{inputs.TARGET_PLATFORM}}"
           build-type: "${{inputs.BUILD_TYPE}}"
-          commit-link: "https://github.com/${{ github.repository }}/commit/${{steps.get-commit-hash.outputs.sha}}"
-          action-link: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          commit-link: "https://github.com"
+          action-link: "https://github.com"
           slack-bot-token: "R8Rq3E32orqSe0Nod7IZ8meq"
   job1:
     name: Job-1
