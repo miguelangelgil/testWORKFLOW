@@ -39,7 +39,7 @@ jobs:
           message-type: init
           actor: "${{ github.actor }}"
           project-name: "${{inputs.PROJECT_NAME}}"
-          bundle-version-code: "1.0.0 (0)"
+          bundle-version-code: "1.0.0"
           platform: "${{inputs.TARGET_PLATFORM}}"
           build-type: "${{inputs.BUILD_TYPE}}"
           commit-link: "https://github.com/${{ github.repository }}/commit/${{steps.get-commit-hash.outputs.sha}}"
