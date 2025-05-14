@@ -1,0 +1,43 @@
+name: 'slack'
+description: 'slack message '
+inputs:
+  channel-id: # channel id to post message when using bot token
+    description: 'Slack channel ID where message will be posted. Needed if using bot token'
+    required: false
+    default: C03Q50M03N3
+  payload-file-path: # path to JSON payload to send to Slack via webhook
+    description: 'path to JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead. If payload is provided, it will take preference over this field'
+    required: false
+    default: ./.github/github-workflows/.github/slackMessage/slackMessage.json
+  message-type:
+    description: init | end  | endlink
+    required: true
+  autor:
+    required: true
+  project-name:
+    required: true
+  bundle-version-code:
+    required: true
+  platform:
+    required: true
+  build-type:
+    required: true
+  commit-link:
+    required: true
+  action-link:
+    required: true
+  slack-bot-token:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+      - name: Updating message
+        id: header
+        shell: bash
+        run: | 
+           curl -H "Content-type: application/json" \
+            --data "{\"channel\":\"${{inputs.channel-id}}\",\"blocks\":"[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"GitHubActionbuild:pepe_naruto:\"}},{\"type\":\"section\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Createdby:* ${{inputs.actor}}\"},{\"type\":\"mrkdwn\",\"text\":\"*Projectname:*${{inputs.project-name}}\"}]},{\"type\":\"section\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*TargetBuild:*${{inputs.platform}} - ${{inputs.build-type}}\"},{\"type\":\"mrkdwn\",\"text\":\"*Version:*${{inputs.bundle-version-code}}\"}]},{\"type\":\"section\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*URL:*<${{inputs.commit-link}}|commitlink>\"},{\"type\":\"mrkdwn\",\"text\":\"*URL:*<${{inputs.action-link}}|actionlink>\"}]}]"}" \
+            -H "Authorization: Bearer xoxb-7032279906-3834010697957-YKP37c6Omvf6prcJarulWWq2" \
+            -X POST https://slack.com/api/chat.postMessage
+      
