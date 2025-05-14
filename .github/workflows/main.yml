@@ -32,7 +32,7 @@ jobs:
       - id: get-commit-hash
         run: echo "::set-output name=sha::$(git rev-parse HEAD)"
       - name: header
-        uses: ./slack
+        uses: ./github/slack
         with:
           channel-id: C05DUPTC0Q5
           message-type: init
