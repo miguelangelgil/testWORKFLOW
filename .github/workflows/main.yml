@@ -31,15 +31,13 @@ jobs:
     steps:
       - name: send headrers
         run: |
-          ts=$(curl -s -X POST https://hooks.slack.com/triggers/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 \
+          curl -X POST https://hooks.slack.com/triggers/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 \
             -H "Content-Type: application/json" \
             -d '{
-              "state": ":pepe_naruto:"
               "project_name": "${{ inputs.PROJECT_NAME }}",
               "target_platform": "${{ inputs.TARGET_PLATFORM }}",
               "build_type": "${{ inputs.BUILD_TYPE }}"
-            }' | jq -r '.ts')
-            echo "ts=$ts" >> $GITHUB_OUTPUT
+            }'
   job1:
     name: Job-1
     runs-on: ubuntu-latest
@@ -74,17 +72,72 @@ jobs:
   
   endSlack:
     name: end Slack
+    if: always()
     runs-on: ubuntu-latest
-    needs: [job4, header]
+    needs: [job1, job2, job3,job4, header]
     steps:
       - run: |
-          curl -X POST https://hooks.slack.com/triggers/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 \
+
+          curl -X POST https://hooks.slack.com/triggers/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 \
             -H "Content-Type: application/json" \
-            -d '{"ts": "${{needs.header.outputs.ts}}"
-              "state": ":heavy_check_mark:"
-              "project_name": "${{ inputs.PROJECT_NAME }}",
-              "target_platform": "${{ inputs.TARGET_PLATFORM }}",
-              "build_type": "${{ inputs.BUILD_TYPE }}"
+            -d '{
+              "color": "#C2FAFB",
+              "blocks": [
+                  {
+                  "type": "header",
+                  "text": {
+                      "type": "plain_text",
+                      "text": "GitHub Action build"
+                  }
+                  },
+                  {
+                  "type": "section",
+                  "fields": [
+                      {
+                      "type": "mrkdwn",
+                      "text": "*Created by: * ${{github.actor}}"
+                      },
+                      {
+                      "type": "mrkdwn",
+                      "text": "*Project name: * ${{inputs.PROJECT_NAME}}"
+                      }
+                  ]
+                  },
+                  {
+                  "type": "section",
+                  "fields": [
+                      {
+                      "type": "mrkdwn",
+                      "text": "*Target Build: * ${{inputs.TARGET_PLATFORM}} - ${{inputs.BUILD_TYPE}}"
+                      },
+                      {
+                      "type": "mrkdwn",
+                      "text": "*Version: * inputs.bundle-version-code"
+                      }
+                  ]
+                  },
+                  {
+                  "type": "section",
+                  "fields": [
+                      {
+                      "type": "mrkdwn",
+                      "text": "*URL: * <inputs.commit-link| https://github.com/${{ github.repository }}/commit/${{steps.get-commit-hash.outputs.sha}}>"
+                      },
+                      {
+                      "type": "mrkdwn",
+                      "text": "*URL: * <inputs.action-link| https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}>"
+                      }
+                  ]
+                  },
+                  {
+                      "type":"header",
+                      "text": 
+                      {
+                          "type":"plain_text",
+                          "text":"Tasks"
+                      }
+                  }
+              ]
             }'
 # job5:
   #   name: Job-5
