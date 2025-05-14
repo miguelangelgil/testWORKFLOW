@@ -121,7 +121,7 @@ jobs:
                   "fields": [
                       {
                       "type": "mrkdwn",
-                      "text": "*URL: * <inputs.commit-link| https://github.com/${{ github.repository }}/commit/${{steps.get-commit-hash.outputs.sha}}>"
+                      "text": "*URL: * <inputs.commit-link| https://github.com/${{ github.repository }}/commit/${{github.workflow_sha}}>"
                       },
                       {
                       "type": "mrkdwn",
