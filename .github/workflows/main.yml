@@ -1,164 +1,21 @@
 name: testWorkflow
-on:
-    workflow_dispatch:
-      inputs:
-        PROJECT_NAME:
-          required: true
-          type: string
-        TARGET_PLATFORM:
-          required: true
-          type: string
-        BUILD_TYPE:
-          required: true
-          type: string
+on: push
 
 jobs:
-  # slack:
-  #   name: slack
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: log
-  #     run: echo ${{toJson(github)}}
-  #   - name: Send GitHub Action data to a Slack workflow
-  #     uses: slackapi/slack-github-action@v2.0.0
-  #     with:
-  #       payload-file-path: ${{toJson(github.event.workflow)}}
-  #       webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-  #       webhook-type: webhook-trigger
-  header:
-    name: Set Header
-    runs-on: ubuntu-latest
+  check-modified-files:
+    name: preparing runner
+    runs-on: tech
+    timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - id: get-commit-hash
-        run: echo "::set-output name=sha::$(git rev-parse HEAD)"
-      - name: header
-        uses: ./.github/slack
-        with:
-          channel-id: C05DUPTC0Q5
-          message-type: init
-          actor: "${{ github.actor }}"
-          project-name: "${{inputs.PROJECT_NAME}}"
-          bundle-version-code: "1.0.0"
-          platform: "${{inputs.TARGET_PLATFORM}}"
-          build-type: "${{inputs.BUILD_TYPE}}"
-          commit-link: "https://github.com"
-          action-link: "https://github.com"
-          slack-bot-token: "R8Rq3E32orqSe0Nod7IZ8meq"
-  job1:
-    name: Job-1
-    runs-on: ubuntu-latest
-    needs: header
-    steps:
-      - name: Tag commit1
-        run: echo "job1"
-      - name: Tag commit2
-        run: echo "job1 step2"
-  job2:
-    name: Job-2
-    runs-on: ubuntu-latest
-    needs: job1
-    steps:
-      - name: Tag commit3
-        run: echo "job2"
-  job3:
-    name: Job-3
-    runs-on: ubuntu-latest
-    needs: job2
-    steps:
-      - name: Tag commit4
-        run: echo "job3"
-    
-  job4:
-    name: Job-4
-    runs-on: ubuntu-latest
-    needs: job3
-    steps:
-      - name: Tag commit5
-        run: echo "job4"
-  
-  endSlack:
-    name: end Slack
-    if: always()
-    runs-on: ubuntu-latest
-    needs: [job1, job2, job3,job4, header]
-    steps:
-      - run: |
-
-          curl -X POST https://hooks.slack.com/triggers/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 \
-            -H "Content-Type: application/json" \
-            -d '{
-              "color": "#C2FAFB",
-              "blocks": [
-                  {
-                  "type": "header",
-                  "text": {
-                      "type": "plain_text",
-                      "text": "GitHub Action build"
-                  }
-                  },
-                  {
-                  "type": "section",
-                  "fields": [
-                      {
-                      "type": "mrkdwn",
-                      "text": "*Created by: * ${{github.actor}}"
-                      },
-                      {
-                      "type": "mrkdwn",
-                      "text": "*Project name: * ${{inputs.PROJECT_NAME}}"
-                      }
-                  ]
-                  },
-                  {
-                  "type": "section",
-                  "fields": [
-                      {
-                      "type": "mrkdwn",
-                      "text": "*Target Build: * ${{inputs.TARGET_PLATFORM}} - ${{inputs.BUILD_TYPE}}"
-                      },
-                      {
-                      "type": "mrkdwn",
-                      "text": "*Version: * inputs.bundle-version-code"
-                      }
-                  ]
-                  },
-                  {
-                  "type": "section",
-                  "fields": [
-                      {
-                      "type": "mrkdwn",
-                      "text": "*URL: * <inputs.commit-link| https://github.com/${{ github.repository }}/commit/${{github.workflow_sha}}>"
-                      },
-                      {
-                      "type": "mrkdwn",
-                      "text": "*URL: * <inputs.action-link| https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}>"
-                      }
-                  ]
-                  },
-                  {
-                      "type":"header",
-                      "text": 
-                      {
-                          "type":"plain_text",
-                          "text":"Tasks"
-                      }
-                  }
-              ]
-            }'
-# job5:
-  #   name: Job-5
-  #   runs-on: ubuntu-latest
-  #   needs: job4
-  #   steps:
-  #     - name: Tag commit
-  #       run: echo "job5"
-  # job6:
-  #   name: Job-6
-  #   runs-on: ubuntu-latest
-  #   needs: job5
-  #   steps:
-  #     - name: Tag commit
-  #       run: echo "job6"
-
+      - name: check-diff
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -q "^carpeta2/"; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
       
+      - name: log
+        if: steps.check-diff.outputs.changes == 'true'
+        run : print true
+
