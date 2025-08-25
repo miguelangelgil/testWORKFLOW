@@ -9,17 +9,39 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+        with:
+          fetch-depth: 0   # importante para que exista el historial y puedas hacer diff
+
       - name: check-diff
         id: check-diff
         run: |
-          if git diff --name-only HEAD^ HEAD | grep -q "^carpeta2/"; then
+          # determinar commit base
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            BASE=HEAD^
+          else
+            BASE=$(git hash-object -t tree /dev/null) # árbol vacío (primer commit)
+          fi
+
+          if git diff --name-only $BASE HEAD | grep -q "^carpeta2/"; then
             echo "changes=true" >> $GITHUB_OUTPUT
           else
             echo "changes=false" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: log
         if: steps.check-diff.outputs.changes == 'true'
-        run : print true
+        run: echo "print true"
+
+      # - name: check-diff
+      #   id: check-diff
+      #   run: |
+      #     if git diff --name-only HEAD^ HEAD | grep -q "^carpeta2/"; then
+      #       echo "changes=true" >> $GITHUB_OUTPUT
+      #     else
+      #       echo "changes=false" >> $GITHUB_OUTPUT
+      #     fi
+      
+      # - name: log
+      #   if: steps.check-diff.outputs.changes == 'true'
+      #   run : print true
 
