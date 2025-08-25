@@ -4,7 +4,7 @@ on: push
 jobs:
   check-modified-files:
     name: preparing runner
-    runs-on: tech
+    runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
       - name: check-diff
