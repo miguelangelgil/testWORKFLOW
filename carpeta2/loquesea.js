@@ -1,1 +1,1 @@
-es un js
+es un js HAGO MAS CAMBIOS Y COMO ES UN JS DEBERÍA AFECTAR
