@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
       - name: check-diff
         id: check-diff
         run: |
