@@ -8,6 +8,7 @@ jobs:
     timeout-minutes: 8
     steps:
       - name: check-diff
+        id: check-diff
         run: |
           if git diff --name-only HEAD^ HEAD | grep -q "^carpeta2/"; then
             echo "changes=true" >> $GITHUB_OUTPUT
