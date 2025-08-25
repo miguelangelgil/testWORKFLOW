@@ -9,4 +9,4 @@ jobs:
       - uses: shufo/auto-assign-reviewer-by-files@v1.2.1
         with:
           config: ".github/assign-by-files.yml"
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
