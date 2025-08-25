@@ -1,0 +1,7 @@
+---
+# you can use glob pattern
+"**/*.js":
+  - miguelangelgil
+
+".github/workflows/*.yml":
+  - miguelangelgil
